@@ -114,8 +114,18 @@ public class MatriceEntiere {
         }
         return result;
     }
+
     public static void main(String[] args) {
-        
+        File file = new File("data/donnees_produtit1");
+        MatriceEntiere matrice1 = new MatriceEntiere(file);
+        file = new File("data/donnees_produit2");
+        MatriceEntiere matrice2 = new MatriceEntiere(file);
+        try {
+            MatriceEntiere result = matrice1.multipication(matrice2);
+            System.out.println(result);
+        } catch (TaillesNonConcordantesException e) {
+            e.printStackTrace();
+        }
     }
-    }
+
 }
