@@ -52,7 +52,7 @@ public class MatriceEntiere {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < lig; i++) {
             for (int j = 0; j < col; j++) {
-                sb.append(mat[i][j]);
+                sb.append(String.format("%05d", mat[i][j]));
             }
             sb.append("\n");
         }
@@ -116,9 +116,9 @@ public class MatriceEntiere {
     }
 
     public static void main(String[] args) {
-        File file = new File("data/donnees_produtit1");
+        File file = new File("tme/data/donnees_produit1");
         MatriceEntiere matrice1 = new MatriceEntiere(file);
-        file = new File("data/donnees_produit2");
+        file = new File("tme/data/donnees_produit2");
         MatriceEntiere matrice2 = new MatriceEntiere(file);
         try {
             MatriceEntiere result = matrice1.multipication(matrice2);
