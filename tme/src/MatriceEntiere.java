@@ -52,7 +52,7 @@ public class MatriceEntiere {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < lig; i++) {
             for (int j = 0; j < col; j++) {
-                sb.append(String.format("%05d", mat[i][j]));
+                sb.append(String.format("%8d", mat[i][j]));
             }
             sb.append("\n");
         }
