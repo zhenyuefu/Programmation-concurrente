@@ -1,3 +1,5 @@
+package martice;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -116,27 +118,15 @@ public class MatriceEntiere {
         return result;
     }
 
-    public static void main(String[] args) {
-        File file = new File("tme/data/donnees_produit1");
-        MatriceEntiere matrice1 = new MatriceEntiere(file);
-        file = new File("tme/data/donnees_produit2");
-        MatriceEntiere matrice2 = new MatriceEntiere(file);
-        try {
-            MatriceEntiere result = matrice1.multipication(matrice2);
-            System.out.println(result);
-        } catch (TaillesNonConcordantesException e) {
-            e.printStackTrace();
+    public static int produitLigneColonne(MatriceEntiere m1, int i, MatriceEntiere m2, int j)
+            throws TaillesNonConcordantesException {
+        if (!(m2.getLignes() == m1.getColonnes()))
+            throw new TaillesNonConcordantesException();
+        int res = 0;
+        for (int k = 0; k < m1.getColonnes(); k++) {
+            res += m1.getElem(i, k) * m2.getElem(k, j);
         }
-        file = new File("tme/data/donnees_somme1");
-        matrice1 = new MatriceEntiere(file);
-        file = new File("tme/data/donnees_somme2");
-        matrice2 = new MatriceEntiere(file);
-        try {
-            MatriceEntiere result = matrice1.add(matrice2);
-            System.out.println(result);
-        } catch (TaillesNonConcordantesException e) {
-            e.printStackTrace();
-        }
+        return res;
     }
 
 }
