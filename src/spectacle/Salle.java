@@ -18,34 +18,33 @@ public class Salle {
         }
     }
 
-    public synchronized boolean capaciteOK(final int i) {
-        System.out.println("nbPlaces:" + nbPlacesLibres);
-        if (i <= nbPlacesLibres) {
-            return true;
-        }
-        return false;
+    public boolean capaciteOK(final int i) {
+        return i <= nbPlacesLibres;
     }
 
     /**
      * renvoie -1 s’il n’y pas n places libres cote a cote au rang i. Sinon, renvoie
      * la position j qui est la premiere du bloc de n places libres au rang i
      */
-    public synchronized int nContiguesAuRangI(final int n, final int i) {
+    public int nContiguesAuRangI(final int n, final int i) {
         int nbPlaces = 0;
         for (int j = 0; j < nbPlacesParRang; j++) {
-            if (placesLibres[i][j])
+            if (placesLibres[i][j]) {
                 nbPlaces++;
-            else
+            } else {
                 nbPlaces = 0;
-            if (nbPlaces == n)
+            }
+            if (nbPlaces == n) {
                 return j - n;
+            }
         }
         return -1;
     }
 
-    public synchronized boolean reserverContigues(int n) {
-        if (!capaciteOK(n))
+    public boolean reserverContigues(int n) {
+        if (!capaciteOK(n)) {
             return false;
+        }
         for (int i = 0; i < nbRangs; i++) {
             final int pos = nContiguesAuRangI(n, i);
             if (pos != -1) {
@@ -61,8 +60,10 @@ public class Salle {
     }
 
     public synchronized boolean reserver(int n) {
-        if (!capaciteOK(n))
+        System.out.println("nbPlaces:" + nbPlacesLibres);
+        if (!capaciteOK(n)) {
             return false;
+        }
         if (!reserverContigues(n)) {
             for (int i = 0; i < nbRangs; i++) {
                 for (int j = 0; j < nbPlacesParRang; j++) {
@@ -70,8 +71,9 @@ public class Salle {
                         n--;
                         placesLibres[i][j] = false;
                         nbPlacesLibres--;
-                        if (n == 0)
+                        if (n == 0) {
                             return true;
+                        }
                     }
                 }
             }

@@ -1,9 +1,9 @@
 package spectacle;
 
 public class Groupe implements Runnable {
+    private static int cpt = 1;
     private final int id;
     private final int nb;
-    private static int cpt;
     private Salle salle;
 
     public Groupe(int n, Salle salle) {
@@ -12,7 +12,9 @@ public class Groupe implements Runnable {
         this.salle = salle;
     }
 
+    @Override
     public void run() {
-        salle.reserver(nb);
+        System.out.println("Group " + id + " reserve " + (salle.reserver(nb) ? "success" : "fail"));
+        System.out.println(salle);
     }
 }
