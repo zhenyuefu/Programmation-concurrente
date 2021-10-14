@@ -24,9 +24,10 @@ public class AleaStock {
 
     public AleaObject getObject() {
         AleaObject o = null;
-        if (count > -1) {
+        count--;
+        if (count > 0) {
             o = objects[count];
-            objects[count--] = null;
+            objects[count] = null;
         }
         return o;
     }
