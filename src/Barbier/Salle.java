@@ -1,56 +1,59 @@
 package Barbier;
 
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public class Salle {
-    private static int MAX_CHAIR = 10;
-    private Client[] chairAt;
-    private int nbClient;
-    private Lock lock = new ReentrantLock();
-    private Condition salleVide = lock.newCondition();
-    private Condition sallePleain = lock.newCondition();
-    private static Salle salle = new Salle();
+
+    private static final int MAX_CHAIR = 10;
+    private static final Salle salle = new Salle();
+    private final BlockingQueue<Client> chair;
+    private Barbier barbier;
 
     private Salle() {
-        chairAt = new Client[MAX_CHAIR];
-        nbClient = 0;
+        chair = new ArrayBlockingQueue<>(MAX_CHAIR);
     }
-    
+
     public static Salle getInstance() {
         return salle;
     }
 
-    public void getChair(Client c) throws InterruptedException {
-        lock.lock();
-        try {
-            while (nbClient == MAX_CHAIR) {
-                sallePleain.await();
-            }
-            chairAt[nbClient] = c;
-            System.out.println(c + "takes chair " + nbClient);
-            nbClient++;
-            salleVide.notify();
-        } finally {
-            lock.unlock();
+    public void setBarbier(Barbier barbier) {
+        this.barbier = barbier;
+    }
+
+    public void enter(Client c) throws InterruptedException {
+        if (!isFull()) {
+            chair.put(c);
+            System.out.println(c + " est entré");
+            printChairs();
+            barbier.clientArrived();
+        } else {
+            System.out.println("La salle est pleine " + c + " sorti");
         }
     }
 
-    public void releaseChair() throws InterruptedException {
-        lock.lock();
-        try {
-            while (nbClient == 0) {
-                salleVide.await();
-            }
-            chairAt[nbClient] = null;
-            nbClient --;
-            sallePleain.notify();
-        }finally {
-            lock.unlock();
+    public Client recupere() throws InterruptedException {
+        Client c = chair.take();
+        System.out.println(c + " est recupere");
+        printChairs();
+        return c;
+    }
+
+    public boolean isFull() {
+        return chair.remainingCapacity() == 0;
+    }
+
+    public boolean isEmpty() {
+        return chair.isEmpty();
+    }
+
+    public void printChairs() {
+        synchronized (chair) {
+            System.out.println("----------------------------------------------------");
+            System.out.println(chair);
+            System.out.println("----------------------------------------------------");
         }
     }
-    
-    
 
 }
