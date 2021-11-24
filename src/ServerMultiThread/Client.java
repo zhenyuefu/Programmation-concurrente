@@ -2,17 +2,16 @@ package ServerMultiThread;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Client implements Runnable{
+public class Client implements Runnable {
 
-    
     private int id;
     private Server server;
     private ReponseRequete requete;
-    private final Object waitReponseLock = new Object();
-    
+    private boolean receive;
+
     private static AtomicInteger cpt = new AtomicInteger();
     private static AtomicInteger clientActif = new AtomicInteger();
-    
+
     public Client(Server s) {
         id = cpt.incrementAndGet();
         clientActif.getAndIncrement();
@@ -20,40 +19,38 @@ public class Client implements Runnable{
         server = s;
     }
 
-    private void waitReponse() throws InterruptedException {
-        synchronized (waitReponseLock) {
-            waitReponseLock.wait();
-        }
+    private synchronized void waitReponse() throws InterruptedException {
+        while (!receive)
+            wait();
     }
 
-    public void requeteTraitee() {
-        synchronized (waitReponseLock) {
-            waitReponseLock.notify();
-        }
+    public synchronized void requeteTraitee() {
+        receive = true;
+        System.out.println("Client " + id + " recieved reponse.");
+        clientActif.decrementAndGet();
+        notify();
     }
-    
-    private void sendRequete() {
+
+    private synchronized void sendRequete() throws InterruptedException {
         server.receiveRequete(requete);
+        System.out.println("Client " + id + " send the request to the server. Wait reponse...");
     }
-    
-    
+
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
         return "Client " + id;
     }
-    
+
     @Override
     public void run() {
         try {
-            System.out.println("Client "+ id + " init");
+            System.out.println("Client " + id + " init");
             sendRequete();
-            System.out.println("Client "+ id + " send the request to the server. Wait reponse...");
             waitReponse();
-            
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Client "+ id + " recieved reponse.");
+
     }
 }
