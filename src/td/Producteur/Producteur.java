@@ -1,3 +1,5 @@
+package td.Producteur;
+
 import java.util.Random;
 
 public class Producteur implements Runnable {
