@@ -62,6 +62,10 @@ public class MatriceEntiere {
         return sb.toString();
     }
 
+    public void affiche() {
+        System.out.println(this);
+    }
+
     public void initZero() {
         for (int i = 0; i < lig; i++) {
             for (int j = 0; j < col; j++) {
@@ -119,7 +123,7 @@ public class MatriceEntiere {
     }
 
     public static int produitLigneColonne(MatriceEntiere m1, int i, MatriceEntiere m2, int j)
-            throws TaillesNonConcordantesException {
+        throws TaillesNonConcordantesException {
         if (!(m2.getLignes() == m1.getColonnes()))
             throw new TaillesNonConcordantesException();
         int res = 0;

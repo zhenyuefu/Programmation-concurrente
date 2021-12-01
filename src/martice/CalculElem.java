@@ -1,25 +1,20 @@
 package martice;
 
-public class CalculElem implements Runnable {
-    private MatriceEntiere m1, m2, res;
-    private int i, j;
+import java.util.concurrent.Callable;
 
-    public CalculElem(MatriceEntiere m1, int i, MatriceEntiere m2, int j, MatriceEntiere res) {
+public class CalculElem implements Callable<MatriceElem> {
+    private MatriceEntiere m1, m2;
+    private int indL, indC;
+
+    public CalculElem(int i, int j, MatriceEntiere m1, MatriceEntiere m2) {
         this.m1 = m1;
         this.m2 = m2;
-        this.res = res;
-        this.i = i;
-        this.j = j;
+        this.indL = i;
+        this.indC = j;
     }
 
-    @Override
-    public void run() {
-        try {
-            res.setElem(i, j, MatriceEntiere.produitLigneColonne(m1, i, m2, j));
-        } catch (TaillesNonConcordantesException e) {
-            e.printStackTrace();
-        }
-
+    public MatriceElem call() throws TaillesNonConcordantesException {
+        return new MatriceElem(indL, indC, Integer.valueOf(MatriceEntiere.produitLigneColonne(m1, indL, m2, indC)));
     }
 
 }
