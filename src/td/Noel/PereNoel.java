@@ -1,5 +1,6 @@
 package td.Noel;
 
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -7,40 +8,24 @@ import java.util.concurrent.locks.ReentrantLock;
 public class PereNoel implements Runnable {
     private final int NB_TOTAL_RENNES;
     private int nbRennesAtteles = 0;
-    private boolean busy = false;
-    private Lock lock = new ReentrantLock();
-    private Condition pereNoelDispo = lock.newCondition();
-    private Condition renneEnAttente = lock.newCondition();
+    private Semaphore renneEnAttente = new Semaphore(0);
+    private Semaphore pereNoelDispo = new Semaphore(0, true);
 
     public PereNoel(int nb) {
         NB_TOTAL_RENNES = nb;
     }
 
     public void sayHello() throws InterruptedException {
-        lock.lock();
-        try {
-            while (busy) {
-                pereNoelDispo.await();
-            }
-            busy = true;
-            renneEnAttente.signal();
-        } finally {
-            lock.unlock();
-        }
+        renneEnAttente.release();
+        pereNoelDispo.acquire();
     }
 
     private void attelerRenne() throws InterruptedException {
-        lock.lock();
-        try {
-            while (!busy) {
-                renneEnAttente.await();
-            }
-            nbRennesAtteles++;
-            busy = false;
-            pereNoelDispo.signal();
-        } finally {
-            lock.unlock();
-        }
+        renneEnAttente.acquire();
+        System.out.println("Je suis le père Noel et je vais atteler un renne");
+        Thread.sleep(300);
+        nbRennesAtteles++;
+        pereNoelDispo.release();
     }
 
     public void run() {
