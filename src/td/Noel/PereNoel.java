@@ -1,32 +1,46 @@
 package td.Noel;
 
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class PereNoel implements Runnable {
     private final int NB_TOTAL_RENNES;
     private int nbRennesAtteles = 0;
     private boolean busy = false;
+    private Lock lock = new ReentrantLock();
+    private Condition pereNoelDispo = lock.newCondition();
+    private Condition renneEnAttente = lock.newCondition();
 
     public PereNoel(int nb) {
         NB_TOTAL_RENNES = nb;
     }
 
-    public synchronized void sayHello() throws InterruptedException {
-        while (busy) {
-            wait();
+    public void sayHello() throws InterruptedException {
+        lock.lock();
+        try {
+            while (busy) {
+                pereNoelDispo.await();
+            }
+            busy = true;
+            renneEnAttente.signal();
+        } finally {
+            lock.unlock();
         }
-        busy = true;
-        notify();
     }
 
-    private synchronized void attelerRenne() throws InterruptedException {
-        while (!busy) {
-            wait();
+    private void attelerRenne() throws InterruptedException {
+        lock.lock();
+        try {
+            while (!busy) {
+                renneEnAttente.await();
+            }
+            nbRennesAtteles++;
+            busy = false;
+            pereNoelDispo.signal();
+        } finally {
+            lock.unlock();
         }
-        Thread.sleep(300);
-        nbRennesAtteles++;
-        System.out.printf("Encore un renne attelé.");
-        System.out.printf("Il y en a maintenant %d\n", nbRennesAtteles);
-        busy = false;
-        notify();
     }
 
     public void run() {
