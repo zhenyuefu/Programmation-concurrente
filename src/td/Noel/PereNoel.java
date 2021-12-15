@@ -1,9 +1,6 @@
 package td.Noel;
 
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class PereNoel implements Runnable {
     private final int NB_TOTAL_RENNES;
