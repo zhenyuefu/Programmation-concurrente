@@ -1,4 +1,4 @@
-package td.babouins;
+package babouins;
 
 public enum Position {
     NORD(0), SUD(1);

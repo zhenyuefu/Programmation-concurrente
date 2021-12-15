@@ -1,4 +1,4 @@
-package td.babouins;
+package babouins;
 
 import java.util.concurrent.Semaphore;
 
